@@ -58,11 +58,11 @@ var GUI = {
         getInstance: null
     },
     setup: function() {
-        var that = this;
+        var self = this;
         activity.runOnUiThread(new java.lang.Runnable() {
             run: function() {
                 try {
-                    that.guiImage = function() {
+                    self.guiImage = function() {
                         var that = {};
                         that.path = assetsPath + "/assets/images/gui/gui.png";
                         that.originBitmap = android.graphics.BitmapFactory.decodeFile(that.path);
@@ -112,7 +112,7 @@ var GUI = {
                         return that;
                     }();
 
-                    that.minecraftTextView = function(colorStr, size, droppingShadow) {
+                    self.minecraftTextView = function(colorStr, size, droppingShadow) {
                         var my = {};
                         var frame = new android.widget.FrameLayout(activity);
                         var mainText = new android.widget.TextView(activity);
@@ -152,7 +152,7 @@ var GUI = {
                         return my;
                     };
 
-                    that.slidingWindow.rootWindow = function() {
+                    self.slidingWindow.rootWindow = function() {
                         var rootLayout = new android.widget.FrameLayout(activity);
                         var rootLayoutParams = new android.widget.LinearLayout.LayoutParams(
                             android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
@@ -171,11 +171,11 @@ var GUI = {
                         return rootLayout;
                     }();
 
-                    that.slidingWindow.getInstance = function(size, title, message) {
-                        var that = that,
+                    self.slidingWindow.getInstance = function(size, title, message) {
+                        var that = this,
                             my = {},
-                            achievement_window = guiImage.members.achievement_window(),
-                            achievement_icons = guiImage.members.achievement_icons(),
+                            achievement_window = self.guiImage.members.achievement_window(),
+                            achievement_icons = self.guiImage.members.achievement_icons(),
                             width = achievement_window.sizeX * size,
                             height = achievement_window.sizeY * size,
                             textSize = 8 * size;
