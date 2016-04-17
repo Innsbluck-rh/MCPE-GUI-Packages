@@ -1,7 +1,7 @@
 # MCPE-GUI-Package
-# ver 0.0.1
+*ver 0.0.1*
 
-MCPEのGUIを簡単なコードで呼び出せる組み込みMODです。
+*MCPEのGUIを簡単なコードで呼び出せる組み込みMODです。*
 
 現在実装されているGUI
 ・SlidingWindow
