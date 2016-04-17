@@ -2,7 +2,7 @@
 *ver 0.0.1*
 
 ## 概要
-MCPEのGUIを簡単なコードで呼び出せる組み込みMODです。
+MCPEの標準GUIを呼び出せる組み込みMODです。
 
 ### 使用方法
 GUI_Packages.jsの内容を使用したいMODの最後尾に追加してください。
@@ -21,3 +21,12 @@ GUI_Packages.jsの内容を使用したいMODの最後尾に追加してくだ�
             }
         }
     });
+
+### 未実装
+・Text
+・Button
+・ItemSlot
+・SelectableItemSlots
+・Window
+
+順次追加されます。
