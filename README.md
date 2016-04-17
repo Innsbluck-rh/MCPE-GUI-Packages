@@ -16,7 +16,7 @@ GUI_Packages.jsの内容を使用したいMODの最後尾に追加してくだ�
      run: function() {
          try {
              var itemInfoWindow = GUI.slidingWindow.getInstance(
-            	/*  サイズ, タイトル        , メッセージ*/
+            /*  サイズ, タイトル        , メッセージ*/
              	4,    "Hello world!", "Window,window,window!");
              itemInfoWindow.show();
          } catch (error) {
