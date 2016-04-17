@@ -1,7 +1,7 @@
 # MCPE-GUI-Package
 *ver 0.0.1*
 
-## 概略
+## 概要
 MCPEのGUIを簡単なコードで呼び出せる組み込みMODです。
 
 現在実装されているGUI  
