@@ -8,7 +8,8 @@ MCPEの標準GUIを呼び出せる組み込みMODです。
 GUI_Packages.jsの内容を使用したいMODの最後尾に追加してください。
 
 ### 現在実装されているGUI
-・SlidingWindow
+
+* SlidingWindow
 ![SlidingWindow](https://github.com/Innsbluck-Redhat/MCPE-GUI-Packages/blob/master/Images/SlidingWindow.png)
  ```javascript
  activity.runOnUiThread(new java.lang.Runnable() {
