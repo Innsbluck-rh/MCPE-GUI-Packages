@@ -14,10 +14,10 @@ GUI_Packages.jsの内容を使用したいMODの最後尾に追加してくだ�
  activity.runOnUiThread(new java.lang.Runnable() {
      run: function() {
          try {
-             var itemInfoWindow = GUI.slidingWindow.getInstance(
+             var infoWindow = GUI.slidingWindow.getInstance(
             /*  サイズ, タイトル        , メッセージ*/
              	4,    "Hello world!", "Window,window,window!");
-             itemInfoWindow.show();
+             infoWindow.show();
          } catch (error) {
              clientMessage(error);
          }
