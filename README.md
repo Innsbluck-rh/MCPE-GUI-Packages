@@ -22,11 +22,11 @@ GUI_Packages.jsの内容を使用したいMODの最後尾に追加してくだ�
         }
     });
 
-### 未実装
-・Text
-・Button
-・ItemSlot
-・SelectableItemSlots
+### 未実装  
+・Text  
+・Button  
+・ItemSlot  
+・SelectableItemSlots  
 ・Window
 
 順次追加されます。
