@@ -1,4 +1,4 @@
-# MCPE-GUI-Package
+# MCPE-GUI-Packages
 *ver 0.0.1*
 
 ## 概要
