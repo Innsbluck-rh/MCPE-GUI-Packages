@@ -11,7 +11,7 @@ GUI_Packages.jsの内容を使用したいMODの最後尾に追加してくだ�
 
 * SlidingWindow
 
-  ![SlidingWindow](https://github.com/Innsbluck-Redhat/MCPE-GUI-Packages/blob/master\ImagesSlidingWindow.png)
+  ![SlidingWindow](https://github.com/Innsbluck-Redhat/MCPE-GUI-Packages/blob/master\Images\SlidingWindow.png)
 
   ```js
   activity.runOnUiThread(new java.lang.Runnable() {
