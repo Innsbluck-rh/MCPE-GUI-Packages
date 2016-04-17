@@ -40,7 +40,7 @@ function importSources() {
 
                         progressDialog.dismiss();
 
-                        guiSetup();
+                        GUI.setup();
                     }
                 })).start();
             } catch (error) {
@@ -56,14 +56,11 @@ var GUI = {
     slidingWindow: {
         rootWindow: null,
         getInstance: null
-    }
-};
-
-function guiSetup() {
-    activity.runOnUiThread(new java.lang.Runnable() {
-        run: function() {
-            try {
-                with(GUI) {
+    },
+    setup = function() {
+        activity.runOnUiThread(new java.lang.Runnable() {
+            run: function() {
+                try {
                     guiImage = function() {
                         var that = {};
                         that.path = assetsPath + "/assets/images/gui/gui.png";
@@ -258,14 +255,13 @@ function guiSetup() {
 
                         return my;
                     }
+                } catch (error) {
+                    clientMessage(error);
                 }
-            } catch (error) {
-                clientMessage(error);
             }
-        }
-    });
-}
-
+        });
+    }
+};
 //-------ファイル関連-------
 
 function copyFile(inputFile, outputFile) {
