@@ -1,4 +1,4 @@
-# MCPE-GUI-Packages
+﻿# MCPE-GUI-Packages
 
 ## 概要
 MCPEの標準GUIを呼び出せる組み込みMODです。
@@ -31,10 +31,10 @@ GUI_Packages.jsの内容を使用したいMODの最後尾に追加してくだ�
   ```
 
 ### 未実装
-・Text
-・Button
-・ItemSlot
-・SelectableItemSlots
+・Text  
+・Button  
+・ItemSlot  
+・SelectableItemSlots  
 ・Window
 
 順次追加されます。
