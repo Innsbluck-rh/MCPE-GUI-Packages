@@ -6,13 +6,21 @@ function useItem(x, y, z, itemId, blockId, side) {
     activity.runOnUiThread(new java.lang.Runnable() {
         run: function() {
             try {
-                var infoWindow = GUI.slidingWindow.getInstance({
+                var infoWindow = GUI.slidingWindow.create({
                     size: 4,
                     title: "Hello world!",
                     message: "Window,window,window!",
                     horizontal_gravity: GUI.gravity.RIGHT
                 });
                 infoWindow.show();
+                /*
+                GUI.slidingWindow.create({
+                    size: 4,
+                    title: "Hello world!",
+                    message: "Window,window,window!",
+                    horizontal_gravity: GUI.gravity.RIGHT
+                }).show();
+                */
             } catch (error) {
                 clientMessage(error);
             }
@@ -35,48 +43,6 @@ if (typeof newLevel === "function") {
     }
 }
 
-function importSources() {
-    activity.runOnUiThread(new java.lang.Runnable() {
-        run: function() {
-            try {
-                var sourcesPath = android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/games/com.mojang";
-                new java.io.File(sourcesPath).mkdir();
-
-                var zipOutputDir = new java.io.File(sourcesPath, "source");
-                var zipFile = new java.io.File(sourcesPath, "source.zip");
-                var sourceFile = new java.io.File(sourcesPath);
-                GUI.assetsPath = zipOutputDir.getAbsolutePath();
-
-                var progressDialog = new android.app.ProgressDialog(activity);
-                progressDialog.setTitle("処理中");
-                progressDialog.setMessage("しばらくお待ちください");
-                progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-
-                //遅いzip解凍などの処理はThreadで
-                new java.lang.Thread(new java.lang.Runnable({
-                    run: function() {
-
-                        //sourceフォルダがなければ
-                        if (!zipOutputDir.exists()) {
-                            downloadFileFromUrl("https://drive.google.com/uc?export=download&id=0B--Q9jIEQq-KRkxhek1aUXpjdWs", zipFile);
-                            sourceFile.mkdir();
-                            extractZip(zipFile, sourceFile, 4);
-                        }
-
-                        progressDialog.dismiss();
-
-                        GUI.setup();
-                    }
-                })).start();
-            } catch (error) {
-                clientMessage(error);
-            }
-        }
-    });
-}
-
 var GUI = {
     assetsPath: null,
     rootView: null,
@@ -85,7 +51,7 @@ var GUI = {
     minecraftTextView: null,
     slidingWindow: {
         rootView: null,
-        getInstance: null
+        create: null
     },
     setup: function() {
         var self = this;
@@ -172,8 +138,8 @@ var GUI = {
                     }();
 
                     self.minecraftTextView = function(colorStr, size, droppingShadow) {
-                        var my = {};
-                        var frame = new android.widget.FrameLayout(activity);
+                        var my = {},
+                            frame = new android.widget.FrameLayout(activity);
                         var mainText = new android.widget.TextView(activity);
                         var minecraftFont = android.graphics.Typeface.createFromFile(self.assetsPath + "/font/minecraftia.ttf");
                         mainText.setTypeface(minecraftFont);
@@ -223,7 +189,7 @@ var GUI = {
                         return rootLayout;
                     }();
 
-                    self.slidingWindow.getInstance = function(spec) {
+                    self.slidingWindow.create = function(spec) {
                         var that = this,
                             my = {},
                             size = spec.size || 4,
@@ -234,27 +200,29 @@ var GUI = {
                             achievement_icons = self.guiImage.members.achievement_icons(),
                             width = achievement_window.sizeX * size,
                             height = achievement_window.sizeY * size,
-                            textSize = 8 * size;
+                            contentSize = 8 * size;
 
                         var frameImageBitmap = android.graphics.Bitmap.createScaledBitmap(
                             achievement_window.bitmap, width, height, false);
                         var frameImage = new android.widget.ImageView(activity);
                         frameImage.setImageBitmap(frameImageBitmap);
-
-                        var titleText = GUI.minecraftTextView("#ffff00", textSize, false);
+                        //                                     黄色
+                        var titleText = GUI.minecraftTextView("#ffff00", contentSize, false);
                         titleText.setText(title);
-                        titleText.setPadding(textSize, 0, 0, 0);
+                        titleText.setPadding(contentSize, 0, 0, 0);
 
-                        var messageText = GUI.minecraftTextView("#ffffff", textSize, false);
+                        var messageText = GUI.minecraftTextView("#ffffff", contentSize, false);
                         messageText.setText(message);
-                        messageText.setPadding(textSize, 0, 0, 0);
+                        messageText.setPadding(contentSize, 0, 0, 0);
 
+                        //テキストをまとめる
                         var textsLayout = new android.widget.LinearLayout(activity);
                         textsLayout.setOrientation(android.widget.LinearLayout.VERTICAL);
                         textsLayout.setGravity(android.view.Gravity.CENTER_VERTICAL);
                         textsLayout.addView(titleText.getRootView());
                         textsLayout.addView(messageText.getRootView());
 
+                        //ウィンドウの大本 クリックの処理などはここにつけよう
                         var windowLayout = new android.widget.FrameLayout(activity);
                         var windowLayoutParams = new android.widget.FrameLayout.LayoutParams(
                             android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
@@ -268,13 +236,11 @@ var GUI = {
                             anim.setDuration(500);
                             return anim;
                         };
-
                         var waitAnim = function() {
                             var anim = new android.view.animation.TranslateAnimation(0, 0, 0, 0);
                             anim.setDuration(1000);
                             return anim;
                         };
-
                         var outAnim = function() {
                             var anim = new android.view.animation.TranslateAnimation(0, 0, 0, -height);
                             anim.setDuration(500);
@@ -288,23 +254,26 @@ var GUI = {
 
                             inAnimation.setAnimationListener(new android.view.animation.Animation.AnimationListener({
                                 onAnimationEnd: function(anim) {
+                                    //in -> wait
                                     windowLayout.startAnimation(waitAnimation);
                                 }
                             }));
-
                             waitAnimation.setAnimationListener(new android.view.animation.Animation.AnimationListener({
                                 onAnimationEnd: function(anim) {
+                                    //wait -> out
                                     windowLayout.startAnimation(outAnimation);
                                 }
                             }));
-
                             outAnimation.setAnimationListener(new android.view.animation.Animation.AnimationListener({
                                 onAnimationEnd: function(anim) {
+                                    //終わったら消す
                                     that.rootView.removeView(windowLayout);
                                 }
                             }));
 
+                            //表示
                             that.rootView.addView(windowLayout, windowLayoutParams);
+                            //アニメーション開始
                             windowLayout.startAnimation(inAnimation);
                         };
 
@@ -317,6 +286,48 @@ var GUI = {
         });
     }
 };
+
+function importSources() {
+    activity.runOnUiThread(new java.lang.Runnable() {
+        run: function() {
+            try {
+                var sourcesPath = android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/games/com.mojang";
+                new java.io.File(sourcesPath).mkdir();
+
+                var zipOutputDir = new java.io.File(sourcesPath, "source");
+                var zipFile = new java.io.File(sourcesPath, "source.zip");
+                var sourceFile = new java.io.File(sourcesPath);
+                GUI.assetsPath = zipOutputDir.getAbsolutePath();
+
+                var progressDialog = new android.app.ProgressDialog(activity);
+                progressDialog.setTitle("処理中");
+                progressDialog.setMessage("しばらくお待ちください...");
+                progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+
+                //遅いzip解凍などの処理はThreadで
+                new java.lang.Thread(new java.lang.Runnable({
+                    run: function() {
+
+                        //sourceフォルダがなければ
+                        if (!zipOutputDir.exists()) {
+                            downloadFileFromUrl("https://drive.google.com/uc?export=download&id=0B--Q9jIEQq-KRkxhek1aUXpjdWs", zipFile);
+                            sourceFile.mkdir();
+                            extractZip(zipFile, sourceFile, 4);
+                            zipFile.delete();
+                        }
+
+                        progressDialog.dismiss();
+                    }
+                })).start();
+            } catch (error) {
+                clientMessage(error);
+            }
+        }
+    });
+}
+
 //-------ファイル関連-------
 
 function copyFile(inputFile, outputFile) {
