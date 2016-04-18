@@ -1,8 +1,10 @@
 # MCPE-GUI-Packages
-*ver 0.0.1*
 
 ## 概要
 MCPEの標準GUIを呼び出せる組み込みMODです。
+
+### 現在のバージョン
+`0.0.1`
 
 ### 使用方法
 GUI_Packages.jsの内容を使用したいMODの最後尾に追加してください。
@@ -18,7 +20,7 @@ GUI_Packages.jsの内容を使用したいMODの最後尾に追加してくだ�
       run: function() {
           try {
               var infoWindow = GUI.slidingWindow.getInstance(
-             /*  サイズ, タイトル        , メッセージ*/
+             /* サイズ, タイトル        , メッセージ*/
               	4,    "Hello world!", "Window,window,window!");
               infoWindow.show();
           } catch (error) {
@@ -29,10 +31,10 @@ GUI_Packages.jsの内容を使用したいMODの最後尾に追加してくだ�
   ```
 
 ### 未実装
-・Text  
-・Button  
-・ItemSlot  
-・SelectableItemSlots  
+・Text
+・Button
+・ItemSlot
+・SelectableItemSlots
 ・Window
 
 順次追加されます。
