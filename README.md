@@ -17,23 +17,28 @@ GUI_Packages.jsの内容を使用したいMODの最後尾に追加してくだ�
 
   ```js
   activity.runOnUiThread(new java.lang.Runnable() {
-      run: function() {
-          try {
-                var infoWindow = GUI.slidingWindow.getInstance({
-                    //サイズ
+        run: function() {
+            try {
+                var infoWindow = GUI.slidingWindow.create({
                     size: 4,
-                    //タイトル
                     title: "Hello world!",
-                    //メッセージ
                     message: "Window,window,window!",
-                    //横の位置(LEFT:左, CENTER_HORIZONTAL:中心, RIGHT: 右)
                     horizontal_gravity: GUI.gravity.RIGHT
                 });
-          } catch (error) {
-              clientMessage(error);
-          }
-      }
-  });
+                infoWindow.show();
+                /*
+                GUI.slidingWindow.create({
+                    size: 4,
+                    title: "Hello world!",
+                    message: "Window,window,window!",
+                    horizontal_gravity: GUI.gravity.RIGHT
+                }).show();
+                */
+            } catch (error) {
+                clientMessage(error);
+            }
+        }
+    });
   ```
 
 ### 未実装
