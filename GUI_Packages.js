@@ -1,10 +1,7 @@
 var activity = com.mojang.minecraftpe.MainActivity.currentMainActivity.get();
 var assetsPath = "";
 
-
-function newLevel() {
-    importSources();
-}
+importSources();
 
 //-------セットアップ-------
 

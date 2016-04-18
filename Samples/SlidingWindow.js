@@ -1,10 +1,7 @@
 var activity = com.mojang.minecraftpe.MainActivity.currentMainActivity.get();
 var assetsPath = "";
 
-
-function newLevel() {
-    importSources();
-}
+importSources();
 
 function useItem(x, y, z, itemId, blockId, side) {
     activity.runOnUiThread(new java.lang.Runnable() {
