@@ -1,5 +1,4 @@
 var activity = com.mojang.minecraftpe.MainActivity.currentMainActivity.get();
-var assetsPath = "";
 
 importSources();
 
@@ -7,7 +6,12 @@ function useItem(x, y, z, itemId, blockId, side) {
     activity.runOnUiThread(new java.lang.Runnable() {
         run: function() {
             try {
-                var infoWindow = GUI.slidingWindow.getInstance(4, "Hello world!", "Window,window,window!");
+                var infoWindow = GUI.slidingWindow.getInstance({
+                    size: 4,
+                    title: "Hello world!",
+                    message: "Window,window,window!",
+                    horizontal_gravity: GUI.gravity.RIGHT
+                });
                 infoWindow.show();
             } catch (error) {
                 clientMessage(error);
@@ -17,6 +21,19 @@ function useItem(x, y, z, itemId, blockId, side) {
 }
 
 //-------セットアップ-------
+
+if (typeof newLevel === "function") {
+    var oldNewLevel = newLevel;
+
+    function newLevel() {
+        GUI.setup();
+        oldNewLevel();
+    }
+} else {
+    function newLevel() {
+        GUI.setup();
+    }
+}
 
 function importSources() {
     activity.runOnUiThread(new java.lang.Runnable() {
@@ -28,7 +45,7 @@ function importSources() {
                 var zipOutputDir = new java.io.File(sourcesPath, "source");
                 var zipFile = new java.io.File(sourcesPath, "source.zip");
                 var sourceFile = new java.io.File(sourcesPath);
-                assetsPath = zipOutputDir.getAbsolutePath();
+                GUI.assetsPath = zipOutputDir.getAbsolutePath();
 
                 var progressDialog = new android.app.ProgressDialog(activity);
                 progressDialog.setTitle("処理中");
@@ -61,10 +78,13 @@ function importSources() {
 }
 
 var GUI = {
+    assetsPath: null,
+    rootView: null,
+    gravity: null,
     guiImage: null,
     minecraftTextView: null,
     slidingWindow: {
-        rootWindow: null,
+        rootView: null,
         getInstance: null
     },
     setup: function() {
@@ -72,9 +92,38 @@ var GUI = {
         activity.runOnUiThread(new java.lang.Runnable() {
             run: function() {
                 try {
+                    self.rootView = function() {
+                        var rootLayout = new android.widget.FrameLayout(activity);
+                        rootLayout.setClickable(false);
+                        var rootLayoutParams = new android.widget.LinearLayout.LayoutParams(
+                            android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                            android.widget.LinearLayout.LayoutParams.MATCH_PARENT
+                        );
+                        rootLayout.setLayoutParams(rootLayoutParams);
+
+                        var rootWindow = new android.widget.PopupWindow();
+                        rootWindow.setTouchable(false);
+                        rootWindow.setContentView(rootLayout);
+                        rootWindow.setWidth(android.widget.RelativeLayout.LayoutParams.MATCH_PARENT);
+                        rootWindow.setHeight(android.widget.RelativeLayout.LayoutParams.MATCH_PARENT);
+                        rootWindow.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+                        rootWindow.showAtLocation(activity.getWindow().getDecorView(), android.view.Gravity.CENTER, 0, 0);
+                        return rootLayout;
+                    }();
+
+                    self.gravity = {
+                        TOP: android.view.Gravity.TOP,
+                        BOTTOM: android.view.Gravity.BOTTOM,
+                        RIGHT: android.view.Gravity.RIGHT,
+                        LEFT: android.view.Gravity.LEFT,
+                        CENTER: android.view.Gravity.CENTER,
+                        CENTER_VERTICAL: android.view.Gravity.CENTER_VERTICAL,
+                        CENTER_HORIZONTAL: android.view.Gravity.CENTER_HORIZONTAL
+                    };
+
                     self.guiImage = function() {
                         var that = {};
-                        that.path = assetsPath + "/assets/images/gui/gui.png";
+                        that.path = self.assetsPath + "/assets/images/gui/gui.png";
                         that.originBitmap = android.graphics.BitmapFactory.decodeFile(that.path);
                         that.members = {
                             achievement_window: function() {
@@ -126,7 +175,7 @@ var GUI = {
                         var my = {};
                         var frame = new android.widget.FrameLayout(activity);
                         var mainText = new android.widget.TextView(activity);
-                        var minecraftFont = android.graphics.Typeface.createFromFile(assetsPath + "/font/minecraftia.ttf");
+                        var minecraftFont = android.graphics.Typeface.createFromFile(self.assetsPath + "/font/minecraftia.ttf");
                         mainText.setTypeface(minecraftFont);
                         var textColor = android.graphics.Color.parseColor(colorStr)
                         mainText.setTextColor(textColor);
@@ -162,28 +211,25 @@ var GUI = {
                         return my;
                     };
 
-                    self.slidingWindow.rootWindow = function() {
+                    self.slidingWindow.rootView = function() {
                         var rootLayout = new android.widget.FrameLayout(activity);
                         var rootLayoutParams = new android.widget.LinearLayout.LayoutParams(
                             android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
                             android.widget.LinearLayout.LayoutParams.MATCH_PARENT
                         );
-                        rootLayoutParams.gravity = (android.view.Gravity.RIGHT | android.view.Gravity.TOP);
                         rootLayout.setLayoutParams(rootLayoutParams);
                         rootLayout.setClickable(false);
-
-                        var rootWindow = new android.widget.PopupWindow();
-                        rootWindow.setContentView(rootLayout);
-                        rootWindow.setWidth(android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
-                        rootWindow.setHeight(android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
-                        rootWindow.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
-                        rootWindow.showAtLocation(activity.getWindow().getDecorView(), android.view.Gravity.RIGHT | android.view.Gravity.TOP, 0, 0);
+                        self.rootView.addView(rootLayout);
                         return rootLayout;
                     }();
 
-                    self.slidingWindow.getInstance = function(size, title, message) {
+                    self.slidingWindow.getInstance = function(spec) {
                         var that = this,
                             my = {},
+                            size = spec.size || 4,
+                            title = spec.title || "No Title",
+                            message = spec.message || "No Message",
+                            gravity = ((spec.horizontal_gravity ? spec.horizontal_gravity : self.gravity.CENTER_HORIZONTAL) | self.gravity.TOP),
                             achievement_window = self.guiImage.members.achievement_window(),
                             achievement_icons = self.guiImage.members.achievement_icons(),
                             width = achievement_window.sizeX * size,
@@ -210,11 +256,10 @@ var GUI = {
                         textsLayout.addView(messageText.getRootView());
 
                         var windowLayout = new android.widget.FrameLayout(activity);
-                        var windowLayoutParams = new android.widget.LinearLayout.LayoutParams(
-                            android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
-                            android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
-                        );
-                        windowLayout.setLayoutParams(windowLayoutParams);
+                        var windowLayoutParams = new android.widget.FrameLayout.LayoutParams(
+                            android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
+                            android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
+                            gravity);
                         windowLayout.addView(frameImage);
                         windowLayout.addView(textsLayout);
 
@@ -255,12 +300,11 @@ var GUI = {
 
                             outAnimation.setAnimationListener(new android.view.animation.Animation.AnimationListener({
                                 onAnimationEnd: function(anim) {
-                                    that.rootWindow.removeView(windowLayout);
-                                    windowLayout.setVisibility(android.view.View.GONE);
+                                    that.rootView.removeView(windowLayout);
                                 }
                             }));
 
-                            that.rootWindow.addView(windowLayout);
+                            that.rootView.addView(windowLayout, windowLayoutParams);
                             windowLayout.startAnimation(inAnimation);
                         };
 
