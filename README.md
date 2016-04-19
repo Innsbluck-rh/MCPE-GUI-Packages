@@ -3,8 +3,8 @@
 ## 概要
 MCPEの標準GUIを呼び出せる組み込みMODです。
 
-### 現在のバージョン
-`0.0.1`
+### バージョン情報
+[リリースノート](https://github.com/Innsbluck-Redhat/MCPE-GUI-Packages/blob/master/RELEASENOTE.md "RELEASENOTE.md") を参照してください。
 
 ### 使用方法
 GUI_Packages.jsの内容を使用したいMODの最後尾に追加してください。
@@ -39,6 +39,7 @@ GUI_Packages.jsの内容を使用したいMODの最後尾に追加してくだ�
             }
         }
     });
+
   ```
 
 ### 未実装

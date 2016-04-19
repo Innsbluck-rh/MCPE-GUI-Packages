@@ -9,7 +9,7 @@ function useItem(x, y, z, itemId, blockId, side) {
                 var infoWindow = GUI.slidingWindow.create({
                     size: 4,
                     title: "Hello world!",
-                    message: "Window,window,window!",
+                    message: "window!",
                     horizontal_gravity: GUI.gravity.RIGHT
                 });
                 infoWindow.show();
@@ -141,11 +141,12 @@ var GUI = {
                         var my = {},
                             frame = new android.widget.FrameLayout(activity);
                         var mainText = new android.widget.TextView(activity);
-                        var minecraftFont = android.graphics.Typeface.createFromFile(self.assetsPath + "/font/minecraftia.ttf");
+                        var minecraftFont = android.graphics.Typeface.createFromFile(self.assetsPath + "/font/minecraft_font.ttf");
                         mainText.setTypeface(minecraftFont);
                         var textColor = android.graphics.Color.parseColor(colorStr)
                         mainText.setTextColor(textColor);
                         mainText.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, size);
+                        mainText.setIncludeFontPadding(false);
                         if (droppingShadow) {
                             var shadowText = new android.widget.TextView(activity);
                             shadowText.setTypeface(minecraftFont);
@@ -156,7 +157,8 @@ var GUI = {
                             );
                             shadowText.setTextColor(shadowColor);
                             shadowText.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, size);
-                            shadowText.setPadding(size / 8, size / 8, 0, 0);
+                            shadowText.setPadding(size / 10, size / 10, 0, 0);
+                            shadowText.setIncludeFontPadding(false);
                         }
                         my.setText = function(str) {
                             mainText.setText(str);
@@ -166,10 +168,16 @@ var GUI = {
                         };
                         my.setPadding = function(left, top, right, bottom) {
                             frame.setPadding(left, top, right, bottom);
-                        }
+                        };
                         my.getRootView = function() {
                             return frame;
-                        }
+                        };
+                        my.getWidth = function() {
+                            return mainText.getWidth();
+                        };
+                        my.getHeight = function() {
+                            return mainText.getHeight();
+                        };
                         if (droppingShadow) {
                             frame.addView(shadowText);
                         }
@@ -192,47 +200,57 @@ var GUI = {
                     self.slidingWindow.create = function(spec) {
                         var that = this,
                             my = {},
-                            size = spec.size || 4,
+                            size_px = spec.size || 4,
                             title = spec.title || "No Title",
                             message = spec.message || "No Message",
                             gravity = ((spec.horizontal_gravity ? spec.horizontal_gravity : self.gravity.CENTER_HORIZONTAL) | self.gravity.TOP),
                             achievement_window = self.guiImage.members.achievement_window(),
                             achievement_icons = self.guiImage.members.achievement_icons(),
-                            width = achievement_window.sizeX * size,
-                            height = achievement_window.sizeY * size,
-                            contentSize = 8 * size;
+                            window_width_px = achievement_window.sizeX * size_px,
+                            window_height_px = achievement_window.sizeY * size_px,
+                            textSize = 8 * size_px;
 
                         var frameImageBitmap = android.graphics.Bitmap.createScaledBitmap(
-                            achievement_window.bitmap, width, height, false);
+                            achievement_window.bitmap, window_width_px, window_height_px, false);
                         var frameImage = new android.widget.ImageView(activity);
                         frameImage.setImageBitmap(frameImageBitmap);
                         //                                     黄色
-                        var titleText = GUI.minecraftTextView("#ffff00", contentSize, false);
+                        var titleText = GUI.minecraftTextView("#ffff00", textSize, false);
                         titleText.setText(title);
-                        titleText.setPadding(contentSize, 0, 0, 0);
 
-                        var messageText = GUI.minecraftTextView("#ffffff", contentSize, false);
+                        var textSpace = android.widget.Space(activity);
+                        textSpace.setLayoutParams(new android.widget.LinearLayout.LayoutParams(window_width_px, size_px));
+
+                        var messageText = GUI.minecraftTextView("#ffffff", textSize, false);
                         messageText.setText(message);
-                        messageText.setPadding(contentSize, 0, 0, 0);
 
                         //テキストをまとめる
                         var textsLayout = new android.widget.LinearLayout(activity);
                         textsLayout.setOrientation(android.widget.LinearLayout.VERTICAL);
-                        textsLayout.setGravity(android.view.Gravity.CENTER_VERTICAL);
                         textsLayout.addView(titleText.getRootView());
+                        textsLayout.addView(textSpace);
                         textsLayout.addView(messageText.getRootView());
+
+                        var textWithIconLayout = new android.widget.LinearLayout(activity);
+                        var windowLayoutParams = new android.widget.FrameLayout.LayoutParams(
+                            window_width_px,
+                            window_height_px);
+                        textWithIconLayout.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+                        textWithIconLayout.setGravity(android.view.Gravity.CENTER_VERTICAL);
+                        textWithIconLayout.setPadding(size_px * 6, 0, 0, 0);
+                        textWithIconLayout.addView(textsLayout);
 
                         //ウィンドウの大本 クリックの処理などはここにつけよう
                         var windowLayout = new android.widget.FrameLayout(activity);
                         var windowLayoutParams = new android.widget.FrameLayout.LayoutParams(
-                            android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
-                            android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
+                            window_width_px,
+                            window_height_px,
                             gravity);
                         windowLayout.addView(frameImage);
-                        windowLayout.addView(textsLayout);
+                        windowLayout.addView(textWithIconLayout);
 
                         var inAnim = function() {
-                            var anim = new android.view.animation.TranslateAnimation(0, 0, -height, 0);
+                            var anim = new android.view.animation.TranslateAnimation(0, 0, -window_height_px, 0);
                             anim.setDuration(500);
                             return anim;
                         };
@@ -242,7 +260,7 @@ var GUI = {
                             return anim;
                         };
                         var outAnim = function() {
-                            var anim = new android.view.animation.TranslateAnimation(0, 0, 0, -height);
+                            var anim = new android.view.animation.TranslateAnimation(0, 0, 0, -window_height_px);
                             anim.setDuration(500);
                             return anim;
                         };
@@ -312,7 +330,7 @@ function importSources() {
 
                         //sourceフォルダがなければ
                         if (!zipOutputDir.exists()) {
-                            downloadFileFromUrl("https://drive.google.com/uc?export=download&id=0B--Q9jIEQq-KRkxhek1aUXpjdWs", zipFile);
+                            downloadFileFromUrl("https://drive.google.com/uc?export=download&id=0B--Q9jIEQq-KWFcxdXp4Z2lhOVU", zipFile);
                             sourceFile.mkdir();
                             extractZip(zipFile, sourceFile, 4);
                             zipFile.delete();
