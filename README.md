@@ -12,21 +12,20 @@ GUI_Packages.jsの内容を使用したいMODの最後尾に追加してくだ�
 ### 現在実装されているGUI
 
 * text
+
   ![text](https://github.com/Innsbluck-Redhat/MCPE-GUI-Packages/blob/master/Images/text.png)
 
   ```js
-    GUI.runUiCode(function() {
-        var infoText = GUI.text.create({
-            size: 4,
-            text: "It is text",
-            textColor: "#ffff00",
-            droppingShadow: true,
-            xOffset: 150,
-            yOffset: 200,
-            gravity: (GUI.gravity.CENTER_HORIZONTAL | GUI.gravity.TOP)
-        });
-        infoText.show();
-    }, this);
+    var infoText = GUI.text.create({
+        size: 4,
+        text: "It is text",
+        textColor: "#ffff00",
+        droppingShadow: true,
+        xOffset: 150,
+        yOffset: 200,
+        gravity: (GUI.gravity.CENTER_HORIZONTAL | GUI.gravity.TOP)
+    });
+    infoText.show();
   ```
 
 * SlidingWindow
@@ -34,23 +33,21 @@ GUI_Packages.jsの内容を使用したいMODの最後尾に追加してくだ�
   ![SlidingWindow](https://github.com/Innsbluck-Redhat/MCPE-GUI-Packages/blob/master/Images/SlidingWindow.png)
 
   ```js
-    GUI.runUiCode(function() {
-                var infoWindow = GUI.slidingWindow.create({
-                    size: 4,
-                    title: "Hello world!",
-                    message: "window!",
-                    horizontal_gravity: GUI.gravity.RIGHT
-                });
-                infoWindow.show();
-                /*
-                GUI.slidingWindow.create({
-                    size: 4,
-                    title: "Hello world!",
-                    message: "Window,window,window!",
-                    horizontal_gravity: GUI.gravity.RIGHT
-                }).show();
-                */
-    }, this);
+    var infoWindow = GUI.slidingWindow.create({
+    	size: 4,
+        title: "Hello world!",
+        message: "window!",
+        horizontal_gravity: GUI.gravity.RIGHT
+    });
+    infoWindow.show();
+    /*
+    GUI.slidingWindow.create({
+        size: 4,
+        title: "Hello world!",
+        message: "Window,window,window!",
+        horizontal_gravity: GUI.gravity.RIGHT
+    }).show();
+    */
   ```
 
 ### 未実装
