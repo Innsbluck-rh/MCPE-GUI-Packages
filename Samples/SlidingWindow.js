@@ -3,23 +3,21 @@ var activity = com.mojang.minecraftpe.MainActivity.currentMainActivity.get();
 importSources();
 
 function useItem(x, y, z, itemId, blockId, side) {
-    GUI.runUiCode(function() {
-                var infoWindow = GUI.slidingWindow.create({
-                    size: 4,
-                    title: "Hello world!",
-                    message: "window!",
-                    horizontal_gravity: GUI.gravity.RIGHT
-                });
-                infoWindow.show();
-                /*
-                GUI.slidingWindow.create({
-                    size: 4,
-                    title: "Hello world!",
-                    message: "Window,window,window!",
-                    horizontal_gravity: GUI.gravity.RIGHT
-                }).show();
-                */
-    }, this);
+    var infoWindow = GUI.slidingWindow.create({
+        size: 4,
+        title: "Hello world!",
+        message: "window!",
+        horizontal_gravity: GUI.gravity.RIGHT
+    });
+    infoWindow.show();
+    /*
+    GUI.slidingWindow.create({
+        size: 4,
+        title: "Hello world!",
+        message: "Window,window,window!",
+        horizontal_gravity: GUI.gravity.RIGHT
+    }).show();
+    */
 }
 
 function leaveGame() {
@@ -61,8 +59,10 @@ var GUI = {
         GUI.runUiCode(function() {
             var self = this;
             self.removeAll = function() {
-                var rootWindow = self.rootView.getWindow();
-                rootWindow.dismiss();
+                GUI.runUiCode(function() {
+                    var rootWindow = self.rootView.getWindow();
+                    rootWindow.dismiss();
+                }, self);
             };
 
             self.rootView = function() {
@@ -250,7 +250,9 @@ var GUI = {
                 textViewLayout.addView(textView.getRootView());
 
                 my.show = function() {
-                    self.rootView.getLayout().addView(textViewLayout);
+                    GUI.runUiCode(function() {
+                        self.rootView.getLayout().addView(textViewLayout);
+                    }, self);
                 };
                 my.remove = function() {
                     self.rootView.getLayout().removeView(textViewLayout);
@@ -343,30 +345,32 @@ var GUI = {
                 };
 
                 my.show = function() {
-                    var inAnimation = inAnim();
-                    var waitAnimation = waitAnim();
-                    var outAnimation = outAnim();
+                    GUI.runUiCode(function() {
+                        var inAnimation = inAnim();
+                        var waitAnimation = waitAnim();
+                        var outAnimation = outAnim();
 
-                    inAnimation.setAnimationListener(new android.view.animation.Animation.AnimationListener({
-                        onAnimationEnd: function(anim) {
-                            //in -> wait
-                            windowLayout.startAnimation(waitAnimation);
-                        }
-                    }));
-                    waitAnimation.setAnimationListener(new android.view.animation.Animation.AnimationListener({
-                        onAnimationEnd: function(anim) {
-                            //wait -> out
-                            windowLayout.startAnimation(outAnimation);
-                        }
-                    }));
-                    outAnimation.setAnimationListener(new android.view.animation.Animation.AnimationListener({
-                        onAnimationEnd: function(anim) {
-                            that.rootView.removeView(windowLayout);
-                        }
-                    }));
+                        inAnimation.setAnimationListener(new android.view.animation.Animation.AnimationListener({
+                            onAnimationEnd: function(anim) {
+                                //in -> wait
+                                windowLayout.startAnimation(waitAnimation);
+                            }
+                        }));
+                        waitAnimation.setAnimationListener(new android.view.animation.Animation.AnimationListener({
+                            onAnimationEnd: function(anim) {
+                                //wait -> out
+                                windowLayout.startAnimation(outAnimation);
+                            }
+                        }));
+                        outAnimation.setAnimationListener(new android.view.animation.Animation.AnimationListener({
+                            onAnimationEnd: function(anim) {
+                                that.rootView.removeView(windowLayout);
+                            }
+                        }));
 
-                    that.rootView.addView(windowLayout, windowLayoutParams);
-                    windowLayout.startAnimation(inAnimation);
+                        that.rootView.addView(windowLayout, windowLayoutParams);
+                        windowLayout.startAnimation(inAnimation);
+                    }, self);
                 };
 
                 return my;
