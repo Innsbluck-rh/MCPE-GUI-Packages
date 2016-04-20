@@ -4,21 +4,16 @@ importSources();
 
 function useItem(x, y, z, itemId, blockId, side) {
     GUI.runUiCode(function() {
-                var infoWindow = GUI.slidingWindow.create({
-                    size: 4,
-                    title: "Hello world!",
-                    message: "window!",
-                    horizontal_gravity: GUI.gravity.RIGHT
-                });
-                infoWindow.show();
-                /*
-                GUI.slidingWindow.create({
-                    size: 4,
-                    title: "Hello world!",
-                    message: "Window,window,window!",
-                    horizontal_gravity: GUI.gravity.RIGHT
-                }).show();
-                */
+        var infoText = GUI.text.create({
+            size: 4,
+            text: "It is text",
+            textColor: "#ffff00",
+            droppingShadow: true,
+            xOffset: 150,
+            yOffset: 200,
+            gravity: (GUI.gravity.CENTER_HORIZONTAL | GUI.gravity.TOP)
+        });
+        infoText.show();
     }, this);
 }
 
@@ -230,10 +225,7 @@ var GUI = {
                     text = spec.text || "No Text",
                     textColor = spec.textColor || "#dedfde",
                     droppingShadow = spec.droppingShadow || false;
-
-                for (valName in spec) {
-                    clientMessage(valName + " : " + spec[valName])
-                }
+                
                 var textViewLayout = new android.widget.FrameLayout(activity);
                 textViewLayout.setPadding(xOffset, yOffset, 0, 0);
                 textViewLayoutParams = new android.widget.FrameLayout.LayoutParams(

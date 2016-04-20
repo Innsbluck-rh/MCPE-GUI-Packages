@@ -113,8 +113,8 @@ var GUI = {
 
                     self.minecraftTextView = function(colorStr, size, droppingShadow) {
                         var my = {},
-                            frame = new android.widget.FrameLayout(activity);
-                        var mainText = new android.widget.TextView(activity);
+                            frame = new android.widget.FrameLayout(activity),
+                            mainText = new android.widget.TextView(activity);
                         var minecraftFont = android.graphics.Typeface.createFromFile(self.assetsPath + "/font/minecraft_font.ttf");
                         mainText.setTypeface(minecraftFont);
                         var textColor = android.graphics.Color.parseColor(colorStr)
@@ -122,13 +122,13 @@ var GUI = {
                         mainText.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, size);
                         mainText.setIncludeFontPadding(false);
                         if (droppingShadow) {
-                            var shadowText = new android.widget.TextView(activity);
+                            var shadowText = new android.widget.TextView(activity),
+                                shadowColor = android.graphics.Color.rgb(
+                                    android.graphics.Color.red(textColor) * 0.25,
+                                    android.graphics.Color.green(textColor) * 0.25,
+                                    android.graphics.Color.blue(textColor) * 0.25
+                                );
                             shadowText.setTypeface(minecraftFont);
-                            var shadowColor = android.graphics.Color.rgb(
-                                android.graphics.Color.red(textColor) * 0.25,
-                                android.graphics.Color.green(textColor) * 0.25,
-                                android.graphics.Color.blue(textColor) * 0.25
-                            );
                             shadowText.setTextColor(shadowColor);
                             shadowText.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, size);
                             shadowText.setPadding(size / 10, size / 10, 0, 0);
